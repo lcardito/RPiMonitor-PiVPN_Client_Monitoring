@@ -1,42 +1,40 @@
-var activePage = GetURLParameter('activePage');
-if (activePage == null){ activePage = 0; }
+let activePage = GetURLParameter('activePage');
+if (activePage == null) {
+    activePage = 0;
+}
 
-function UpdateAddon () {
-  options = '<p>'+
-              'No option available for this addon'+
-            '</p>'
-  $(options).insertBefore("#optionsInsertionPoint")
+function UpdateAddon() {
+    let options = '<p>' +
+        'No option available for this addon' +
+        '</p>'
+    $(options).insertBefore("#optionsInsertionPoint")
 
-  $.getJSON('dynamic.json', function(data) {
-    $.extend(data, getData('static'));
-
-    textToDisplay = "";
-    markerString = "Since";
-    textData = data.vpn_clients;
-    textArray = (textData.trim().slice(textData.indexOf(markerString) + (markerString.length + 6)).replace(/[^ -~]+/g, ";").replace(",",";").split(";")).filter(function (el) {
-       return el != "";
-    });
-    next = 0;
-
-    if (textArray[0]!=="No Clients Connected!,"){
-        for (i = 0; i < textArray.length; i++){
-            if ( i == next ){
-              textToDisplay = textToDisplay + "<tr>";
-              next = next + 6;
-            }
-
-            textToDisplay = textToDisplay + "<td>" + textArray[i] + "</td>";
-
-            if (i == next + 5){
-              textToDisplay = textToDisplay + "</tr>";
-            }
+    $.getJSON('dynamic.json', function (data) {
+        $.extend(data, getData('static'));
+        let vpnClientsData = data.vpn_clients;
+        if (vpnClientsData !== 'No Clients Connected!') {
+            $("#addonInsertionPoint")
+                .html(parseTextToDisplay(vpnClientsData));
         }
+    })
+}
 
-        $("#addonInsertionPoint").html(textToDisplay);
-    }
-  })
+function parseTextToDisplay(vpn_clients_data) {
+    let html_rows = '';
+    vpn_clients_data.split('\n')
+        .forEach(client => {
+            html_rows += '<tr>';
+            let client_data = client.replace(/\s+/g, ' ').trim().split(' ');
+            let date_connected = client_data.slice(5, 10).join(' ');
+
+            client_data.slice(0, 5).forEach(client_data_value => {
+                html_rows += '<td>' + client_data_value + '</td>';
+            });
+            html_rows += '<td>' + date_connected + '</td></tr>'
+        });
+    return html_rows;
 }
 
 $(function () {
-  UpdateAddon();
+    UpdateAddon();
 });
