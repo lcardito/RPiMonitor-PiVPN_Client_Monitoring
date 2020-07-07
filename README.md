@@ -1,9 +1,24 @@
-Addon to monitor PiVPN connected clients on RPiMonitor
+#RPi-Monitor PiVPN clients addon
 
-* Download the addon into /usr/share/rpimonitor/web/addons and rename to pivpn
+## Install
+```shell script
+git clone https://github.com/Agente404/RPiMonitor-PiVPN_Client_Monitoring.git /usr/share/rpimonitor/web/addons/pivpn
 
-* Copy pivpn.conf file to /etc/rpimonitor/templates and reference it into /etc/rpimonitor/data.conf
+#TODO LC: can it be done with a symlink?
+cp /usr/share/rpimonitor/web/addons/pivpn/pivpn.conf /etc/rpimonitor/template/
+```
 
-* Activate the addon as normally.
+## Configure
 
-More info at: [https://agente404.com/2019/02/05/monitorizar-pivpn-con-rpi-monitor/](https://agente404.com/2019/02/05/monitorizar-pivpn-con-rpi-monitor/)
+```shell script
+web.addons.X.name=PiVPN                                                                                                                                                    
+web.addons.X.addons=pivpn                                                                                                                                                  
+
+include=/etc/rpimonitor/template/pivpn.conf
+```
+
+
+## Restart
+```shell script
+sudo service rpimonitor restart
+```
